@@ -2,17 +2,60 @@
 @model Stutooroo.Pages.Listings.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Tutor Listings";
+
+    int pageNo = 0;
+
+    if(Model.Pager.CurrentPage != null)
+        pageNo = Model.Pager.CurrentPage;
 }
 
-<h1>Index</h1>
+<h1>Tutor Listings</h1>
 
-<p>
-    <a asp-page="Create">Create New</a>
+<h3>Search and Filter</h3>
+<hr />
+<form method="get">
+    <div class="form-group">
+        <label asp-for="ListingFilter.SearchString">Search:</label>
+        <input asp-for="ListingFilter.SearchString" class="form-control"  value="@Model.ListingFilter.SearchString"/>
+
+        <label asp-for="ListingFilter.ExperienceLvlIdFilter" class="control-label"></label>
+        <select asp-for="ListingFilter.ExperienceLvlIdFilter" class="form-control" asp-items="ViewBag.ExperienceLvlId"></select>
+
+        <label asp-for="ListingFilter.SubjectGroupIdFilter" class="control-label"></label>
+        <select asp-for="ListingFilter.SubjectGroupIdFilter" class="form-control" asp-items="ViewBag.SubjectGroupId"></select>
+
+        <label asp-for="ListingFilter.DateFilterStart" class="control-label"></label>
+        @{
+            if(Model.ListingFilter.DateFilterStart != DateTime.MinValue)
+            {
+                <input asp-for="ListingFilter.DateFilterStart" class="form-control" value="@Model.ListingFilter.DateFilterStart" />
+            }
+            else
+            {
+                <input asp-for="ListingFilter.DateFilterStart" class="form-control" value="" />
+            }
+        }
+        <label asp-for="ListingFilter.HourlyRateFilter" class="control-label"></label>
+        @{
+            if(Model.ListingFilter.HourlyRateFilter != float.MaxValue)
+            {
+                <input asp-for="ListingFilter.HourlyRateFilter" class="form-control" value="@Model.ListingFilter.HourlyRateFilter" />
+            }
+            else
+            {
+                <input asp-for="ListingFilter.HourlyRateFilter" class="form-control" value="" />
+            }
+        }
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+<a asp-page="Create">Create New</a>
 </p>
 <table class="table">
     <thead>
         <tr>
+            <th></th>
             <th>
                 @Html.DisplayNameFor(model => model.Listing[0].Name)
             </th>
@@ -29,20 +72,34 @@
                 @Html.DisplayNameFor(model => model.Listing[0].HourlyRate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Listing[0].Rating)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Listing[0].SubjectGroup)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Listing[0].Subject)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Listing[0].PostedByUser.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Listing[0].PostedByUser.FirstName)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model.Listing) {
-        <tr>
+            <tr>
+                <td>
+                    <a asp-page="./Details" asp-route-id="@item.Id">
+                        @{var listingImage = Model.Images.FirstOrDefault(m => m.ListingId == item.Id);
+                        if(listingImage != null)
+                        {
+                            <img src="Images/@listingImage.ImagePath" height="100" />
+                        }
+                        else
+                        {
+                            <img src="Images/teacher_11720191.png" height="100"/>
+                        }
+                        }
+                    </a>
+                </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -59,20 +116,58 @@
                 @Html.DisplayFor(modelItem => item.HourlyRate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubjectGroup.Name)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Subject)
             </td>
             <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                @Html.DisplayFor(modelItem => item.PostedByUser.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PostedByUser.FirstName)
+            </td>
+            <td>
+                @{
+                    if(Model.UserId == item.PostedByUserId)
+                    {
+                        <a asp-page="./Edit" asp-route-id="@item">Edit</a>
+                        <a asp-page = "./Delete" asp-route-id = "@item.Id" > Delete </a>
+                    }
+                }
+                
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<div class="d-flex justify-content-end">
+    @if (Model.Pager.CurrentPage > 1)
+    {
+        int previousPage = Model.Pager.CurrentPage - 1;
+        <form method="get" asp-page="/Listings/Index" asp-route-pg="@previousPage">
+            <input type="hidden" name="pg" value="@previousPage" />
+            <button type="submit" class="btn btn-secondary mr-2">Previous</button>
+        </form>
+    }
+    @if (Model.Pager.TotalPages > 0)
+    {
+        <ul class="pagination justify-content-end mb-0">
+            @for (var pge = Model.Pager.StartPage; pge <= Model.Pager.EndPage; pge++)
+            {
+                <li class="page-item @(pge == Model.Pager.CurrentPage ? "active" : "")">
+                    <form method="get" asp-page="/Listings/Index" asp-route-pg="@pge">
+                        <input type="hidden" name="pg" value="@pge" />
+                        <button type="submit" class="btn @(pge == Model.Pager.CurrentPage ? "btn-primary" : "btn-secondary")">@pge</button>
+                    </form>
+                </li>
+            }
+        </ul>
+    }
+        @if (Model.Pager.CurrentPage < Model.Pager.TotalPages)
+        {
+            int nextPage = Model.Pager.CurrentPage + 1;
+            <form method="get" asp-page="/Listings/Index" asp-route-pg="@nextPage">
+                <input type="hidden" name="pg" value="@nextPage" />
+                <button type="submit" class="btn btn-secondary">Next</button>
+            </form>
+        }
+</div>

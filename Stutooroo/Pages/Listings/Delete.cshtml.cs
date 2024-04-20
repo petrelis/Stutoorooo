@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,12 @@ namespace Stutooroo.Pages.Listings
     public class DeleteModel : PageModel
     {
         private readonly Stutooroo.Models.StutoorooContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DeleteModel(Stutooroo.Models.StutoorooContext context)
+        public DeleteModel(Stutooroo.Models.StutoorooContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [BindProperty]
@@ -37,6 +40,12 @@ namespace Stutooroo.Pages.Listings
             else 
             {
                 Listing = listing;
+
+                var currentUser = await _userManager.GetUserAsync(User);
+
+                if (Listing.PostedByUserId != currentUser.Id)
+                    return Unauthorized();
+
             }
             return Page();
         }

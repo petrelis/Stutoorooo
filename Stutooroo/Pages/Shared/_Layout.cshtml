@@ -20,6 +20,16 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
+                            <form method="get" asp-page="/Listings/Index">
+                                <button type="submit" class="nav-link btn btn-link text-dark">Listings</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
                             @{
                                 if (User.Identity?.IsAuthenticated ?? false)
                                 {

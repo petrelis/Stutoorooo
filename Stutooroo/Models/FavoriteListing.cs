@@ -11,6 +11,6 @@ namespace Stutooroo.Models
         public int ListingId { get; set; }
         [ForeignKey("FavoritedByUser")]
         public string UserId { get; set; }
-        public virtual IdentityUser FavoritedByUser { get; set; }
+        public virtual ApplicationUser FavoritedByUser { get; set; }
     }
 }

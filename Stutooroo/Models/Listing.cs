@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Stutooroo.Models
@@ -20,6 +21,6 @@ namespace Stutooroo.Models
         public string Subject { get; set; }
         [ForeignKey("PostedByUser")]
         public string? PostedByUserId { get; set; }
-        public virtual IdentityUser? PostedByUser { get; set; }
+        public virtual ApplicationUser? PostedByUser { get; set; }
     }
 }

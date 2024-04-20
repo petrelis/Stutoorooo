@@ -33,7 +33,7 @@
             @Html.DisplayNameFor(model => model.Listing.ExperienceLvl)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Listing.ExperienceLvl.Id)
+            @Html.DisplayFor(model => model.ExperienceLvl.Name)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Listing.HourlyRate)
@@ -42,16 +42,10 @@
             @Html.DisplayFor(model => model.Listing.HourlyRate)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Listing.Rating)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Listing.Rating)
-        </dd>
-        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Listing.SubjectGroup)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Listing.SubjectGroup.Id)
+            @Html.DisplayFor(model => model.SubjectGroup.Name)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Listing.Subject)
@@ -63,7 +57,7 @@
             @Html.DisplayNameFor(model => model.Listing.PostedByUser)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Listing.PostedByUser.Id)
+            @Html.DisplayFor(model => model.PostedByUser.UserName)
         </dd>
     </dl>
 </div>

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Stutooroo.Models;
 using static System.Formats.Asn1.AsnWriter;
 
@@ -18,9 +19,9 @@ namespace Stutooroo.Pages.Listings
     {
         private readonly Stutooroo.Models.StutoorooContext _context;
 
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CreateModel(Stutooroo.Models.StutoorooContext context, UserManager<IdentityUser> userManager)
+        public CreateModel(Stutooroo.Models.StutoorooContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -38,11 +39,13 @@ namespace Stutooroo.Pages.Listings
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var currentUser = await _userManager.GetUserAsync(User);
             var experienceLvl = new ExperienceLvl();
             experienceLvl.Id = Listing.ExperienceLvlId;
+            Listing.ExperienceLvl = await _context.ExperienceLvl.FirstOrDefaultAsync(m => m.Id == experienceLvl.Id);
             var subjectGroup = new SubjectGroup();
             subjectGroup.Id = Listing.SubjectGroupId;
+            Listing.SubjectGroup = await _context.SubjectGroups.FirstOrDefaultAsync(m => m.Id == subjectGroup.Id);
+            var currentUser = await _userManager.GetUserAsync(User);
             Listing.PostedByUser = currentUser;
             Listing.PostedByUserId = currentUser.Id;
             Listing.PostedAtDateTime = DateTime.Now;

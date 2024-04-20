@@ -19,11 +19,12 @@ namespace Stutooroo.Pages.Listings
     {
         private readonly Stutooroo.Models.StutoorooContext _context;
 
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public EditModel(Stutooroo.Models.StutoorooContext context)
+        public EditModel(Stutooroo.Models.StutoorooContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [BindProperty]
@@ -42,6 +43,11 @@ namespace Stutooroo.Pages.Listings
                 return NotFound();
             }
             Listing = listing;
+
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            if (Listing.PostedByUserId != currentUser.Id)
+                return Unauthorized();
 
            ViewData["ExperienceLvlId"] = new SelectList(_context.ExperienceLvl, "Id", "Name");
            ViewData["SubjectGroupId"] = new SelectList(_context.SubjectGroups, "Id", "Name");

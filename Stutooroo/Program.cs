@@ -12,12 +12,16 @@ namespace Stutooroo
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddRazorPages();
+            builder.Services.AddRazorPages()
+                .AddRazorPagesOptions(options =>
+                {
+                    options.Conventions.AddPageRoute("/Listings", "");
+                });
 
             builder.Services.AddDbContext<StutoorooContext>(options =>
                 options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=StutoorooDB;Trusted_Connection=True;"));
 
-            builder.Services.AddDefaultIdentity<IdentityUser>()
+            builder.Services.AddDefaultIdentity<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<StutoorooContext>();
 
@@ -40,6 +44,8 @@ namespace Stutooroo
 
             app.MapRazorPages();
 
+            //app.Environment.ContentRootPath;
+
             using (var scope = app.Services.CreateScope())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -52,7 +58,7 @@ namespace Stutooroo
                         await roleManager.CreateAsync(new IdentityRole(role));
                 }
 
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 
                 var currentUser = userManager.FindByNameAsync("admin");
 

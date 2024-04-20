@@ -31,7 +31,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Listing.HourlyRate" class="control-label"></label>
-                <input asp-for="Listing.HourlyRate" class="form-control" />
+                <input asp-for="Listing.HourlyRate" class="form-control" type="number" step="0.5"/>
                 <span asp-validation-for="Listing.HourlyRate" class="text-danger"></span>
             </div>
             <div class="form-group">

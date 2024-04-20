@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Stutooroo.Models
 {
-    public class StutoorooContext : IdentityDbContext<IdentityUser>
+    public class StutoorooContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Comment> Comments { get; set; }
         public DbSet<CommentImage> CommentImages { get; set; }
@@ -14,9 +14,8 @@ namespace Stutooroo.Models
         public DbSet<ListingImage> ListingImages { get; set; }
         public DbSet<SubjectGroup> SubjectGroups { get; set; }
 
-        public StutoorooContext(DbContextOptions options) : base(options) 
+        public StutoorooContext(DbContextOptions<StutoorooContext> options) : base(options)
         {
-            
         }
     }
 }

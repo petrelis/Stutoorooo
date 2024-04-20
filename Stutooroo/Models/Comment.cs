@@ -12,6 +12,6 @@ namespace Stutooroo.Models
         public string Text { get; set; }
         [ForeignKey("PostedByUser")]
         public string UserId { get; set; }
-        public virtual IdentityUser AspNetUser { get; set; }
+        public virtual ApplicationUser AspNetUser { get; set; }
     }
 }
