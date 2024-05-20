@@ -11,7 +11,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Listing.Id" />
             <div class="form-group">
@@ -35,11 +35,6 @@
                 <span asp-validation-for="Listing.HourlyRate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Listing.Rating" class="control-label"></label>
-                <input asp-for="Listing.Rating" class="form-control" />
-                <span asp-validation-for="Listing.Rating" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Listing.SubjectGroupId" class="control-label"></label>
                 <select asp-for="Listing.SubjectGroupId" class="form-control" asp-items="ViewBag.SubjectGroupId"></select>
                 <span asp-validation-for="Listing.SubjectGroupId" class="text-danger"></span>
@@ -50,9 +45,43 @@
                 <span asp-validation-for="Listing.Subject" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <input type="hidden" asp-for="Listing.PostedByUserId" class="form-control" value="@Model.Listing.PostedByUserId"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageFiles" class="control-label"></label>
+                <input type="file" asp-for="ImageFiles" class="form-control" accept=".jpg, .png" onchange="validateImageFiles()" multiple />
+                <span asp-validation-for="ImageFiles" class="text-danger"></span>
+                <script>
+                    function validateImageFiles() {
+                        const input = document.getElementById('ImageFiles');
+                        const files = input.files;
+                        const allowedExtensions = ['.jpg', '.png'];
+                        let isValid = true;
+
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
+                            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                            if (!allowedExtensions.includes(fileExtension)) {
+                                isValid = false;
+                                break;
+                            }
+                        }
+
+                        if (!isValid) {
+                            input.value = '';
+                            alert('Please select only .jpg or .png files.');
+                        }
+                    }
+                </script>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
+        @foreach (var img in Model.ListingImages)
+        {
+            <img src="@img.ImagePath" height="100" />
+        }
     </div>
 </div>
 

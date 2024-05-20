@@ -217,6 +217,9 @@ namespace Stutooroo.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PhoneNo")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -275,28 +278,6 @@ namespace Stutooroo.Migrations
                     b.HasIndex("ListingId");
 
                     b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("Stutooroo.Models.CommentImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CommentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImagePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CommentId");
-
-                    b.ToTable("CommentImages");
                 });
 
             modelBuilder.Entity("Stutooroo.Models.ExperienceLvl", b =>
@@ -366,7 +347,6 @@ namespace Stutooroo.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PostedByUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<float>("Rating")
@@ -410,6 +390,36 @@ namespace Stutooroo.Migrations
                     b.HasIndex("ListingId");
 
                     b.ToTable("ListingImages");
+                });
+
+            modelBuilder.Entity("Stutooroo.Models.ListingRating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AspNetUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ListingId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AspNetUserId");
+
+                    b.HasIndex("ListingId");
+
+                    b.ToTable("ListingRatings");
                 });
 
             modelBuilder.Entity("Stutooroo.Models.SubjectGroup", b =>
@@ -497,17 +507,6 @@ namespace Stutooroo.Migrations
                     b.Navigation("Listing");
                 });
 
-            modelBuilder.Entity("Stutooroo.Models.CommentImage", b =>
-                {
-                    b.HasOne("Stutooroo.Models.Comment", "Comment")
-                        .WithMany()
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Comment");
-                });
-
             modelBuilder.Entity("Stutooroo.Models.FavoriteListing", b =>
                 {
                     b.HasOne("Stutooroo.Models.Listing", "Listing")
@@ -537,9 +536,7 @@ namespace Stutooroo.Migrations
 
                     b.HasOne("Stutooroo.Models.ApplicationUser", "PostedByUser")
                         .WithMany()
-                        .HasForeignKey("PostedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PostedByUserId");
 
                     b.HasOne("Stutooroo.Models.SubjectGroup", "SubjectGroup")
                         .WithMany()
@@ -561,6 +558,23 @@ namespace Stutooroo.Migrations
                         .HasForeignKey("ListingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Listing");
+                });
+
+            modelBuilder.Entity("Stutooroo.Models.ListingRating", b =>
+                {
+                    b.HasOne("Stutooroo.Models.ApplicationUser", "AspNetUser")
+                        .WithMany()
+                        .HasForeignKey("AspNetUserId");
+
+                    b.HasOne("Stutooroo.Models.Listing", "Listing")
+                        .WithMany()
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AspNetUser");
 
                     b.Navigation("Listing");
                 });

@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
             <h2>Create a new account.</h2>
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
@@ -43,14 +43,36 @@
                 <span asp-validation-for="Input.Bio" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.City" class="form-control" />
-                <label asp-for="Input.City">City</label>
-                <span asp-validation-for="Input.City" class="text-danger"></span>
+                <input asp-for="Input.DateOfBirth" class="form-control" />
+                <label asp-for="Input.DateOfBirth">Date Of Birth</label>
+                <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Address" class="form-control" />
-                <label asp-for="Input.Address">Address</label>
-                <span asp-validation-for="Input.Address" class="text-danger"></span>
+            <div class="form-group">
+                <label asp-for="ImageFile" class="control-label"></label>
+                <input type="file" asp-for="ImageFile" class="form-control" accept=".jpg, .png" onchange="validateImageFiles()" multiple />
+                <span asp-validation-for="ImageFile" class="text-danger"></span>
+                <script>
+                    function validateImageFiles() {
+                        const input = document.getElementById('ImageFile');
+                        const files = input.files;
+                        const allowedExtensions = ['.jpg', '.png'];
+                        let isValid = true;
+
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
+                            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                            if (!allowedExtensions.includes(fileExtension)) {
+                                isValid = false;
+                                break;
+                            }
+                        }
+
+                        if (!isValid) {
+                            input.value = '';
+                            alert('Please select only .jpg or .png files.');
+                        }
+                    }
+                </script>
             </div>
 
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>

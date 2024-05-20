@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Stutooroo.Models;
 
@@ -30,13 +31,15 @@ namespace Stutooroo.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IWebHostEnvironment _env;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IWebHostEnvironment env)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +47,7 @@ namespace Stutooroo.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _env = env;
         }
 
         /// <summary>
@@ -69,12 +73,17 @@ namespace Stutooroo.Areas.Identity.Pages.Account
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
+        /// 
+        [BindProperty]
+        public IFormFile ImageFile { get; set; }
+
         public class InputModel
         {
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
+            [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
@@ -108,6 +117,11 @@ namespace Stutooroo.Areas.Identity.Pages.Account
 
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
+            [Required]
+            [RegularExpression(@"^\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$", ErrorMessage = "Invalid phone number format")]
+            [Phone]
+            [Display(Name = "Phone Number")]
+            public string PhoneNo { get; set; }
 
             [Required]
             [Display(Name = "Short Bio")]
@@ -132,11 +146,6 @@ namespace Stutooroo.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            Input.Email = Input.UserName + "@gmail.com";
-
-            if (ModelState.ContainsKey("Input.Address"))
-                ModelState["Input.Address"].Errors.Clear();
-
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -146,6 +155,23 @@ namespace Stutooroo.Areas.Identity.Pages.Account
                 user.Bio = Input.Bio;
                 user.City = Input.City;
                 user.Address = Input.Address;
+                user.PhoneNo = Input.PhoneNo;
+                user.Email = Input.Email;
+
+                if (ImageFile != null)
+                {
+                    var uploadsDirectory = Path.Combine(_env.WebRootPath, "Images");
+                    var fileName = Path.GetFileName(ImageFile.FileName);
+                    var filePath = Path.Combine(uploadsDirectory, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(stream);
+                    }
+
+                    user.ImagePath = "/Images/" + fileName; // Store the relative path
+                }
+
 
                 await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                 //await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

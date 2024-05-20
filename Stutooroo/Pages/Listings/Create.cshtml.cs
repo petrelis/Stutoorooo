@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Stutooroo.Models;
 using static System.Formats.Asn1.AsnWriter;
 
@@ -21,21 +22,27 @@ namespace Stutooroo.Pages.Listings
 
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public CreateModel(Stutooroo.Models.StutoorooContext context, UserManager<ApplicationUser> userManager)
+        private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _env;
+
+        public CreateModel(Stutooroo.Models.StutoorooContext context, UserManager<ApplicationUser> userManager, Microsoft.AspNetCore.Hosting.IWebHostEnvironment env)
         {
             _context = context;
             _userManager = userManager;
+            _env = env;
         }
 
         public IActionResult OnGet()
         {
             ViewData["ExperienceLvlId"] = new SelectList(_context.ExperienceLvl, "Id", "Name");
             ViewData["SubjectGroupId"] = new SelectList(_context.SubjectGroups, "Id", "Name");
+            Console.WriteLine("\n" + _env.WebRootPath + "\n");
             return Page();
         }
 
         [BindProperty]
         public Listing Listing { get; set; } = default!;
+        [BindProperty]
+        public IFormFileCollection? ImageFiles { get; set; }
 
         public async Task<IActionResult> OnPostAsync()
         {
@@ -46,6 +53,7 @@ namespace Stutooroo.Pages.Listings
             subjectGroup.Id = Listing.SubjectGroupId;
             Listing.SubjectGroup = await _context.SubjectGroups.FirstOrDefaultAsync(m => m.Id == subjectGroup.Id);
             var currentUser = await _userManager.GetUserAsync(User);
+
             Listing.PostedByUser = currentUser;
             Listing.PostedByUserId = currentUser.Id;
             Listing.PostedAtDateTime = DateTime.Now;
@@ -67,6 +75,33 @@ namespace Stutooroo.Pages.Listings
           
             _context.Listings.Add(Listing);
             await _context.SaveChangesAsync();
+
+            // Save listing images
+            if (ImageFiles != null && ImageFiles.Count > 0)
+            {
+                foreach (var file in ImageFiles)
+                {
+                    var uploadsDirectory = Path.Combine(_env.WebRootPath, "Images");
+                    var fileName = Path.GetFileName(file.FileName);
+                    var filePath = Path.Combine(uploadsDirectory, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    // Create a ListingImage and save its path
+                    var listingImage = new ListingImage
+                    {
+                        ListingId = Listing.Id,
+                        ImagePath = "/Images/" + fileName // Store the relative path
+                    };
+
+                    _context.ListingImages.Add(listingImage);
+                }
+
+                await _context.SaveChangesAsync();
+            }
 
             return RedirectToPage("./Index");
         }

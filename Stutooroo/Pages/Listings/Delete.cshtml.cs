@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Stutooroo.Models;
 
 namespace Stutooroo.Pages.Listings
@@ -14,11 +15,14 @@ namespace Stutooroo.Pages.Listings
     {
         private readonly Stutooroo.Models.StutoorooContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _env;
 
-        public DeleteModel(Stutooroo.Models.StutoorooContext context, UserManager<ApplicationUser> userManager)
+
+        public DeleteModel(Stutooroo.Models.StutoorooContext context, UserManager<ApplicationUser> userManager, IWebHostEnvironment env)
         {
             _context = context;
             _userManager = userManager;
+            _env = env;
         }
 
         [BindProperty]
@@ -43,7 +47,7 @@ namespace Stutooroo.Pages.Listings
 
                 var currentUser = await _userManager.GetUserAsync(User);
 
-                if (Listing.PostedByUserId != currentUser.Id)
+                if (Listing.PostedByUserId != currentUser.Id && !User.IsInRole("Admin"))
                     return Unauthorized();
 
             }
@@ -62,6 +66,20 @@ namespace Stutooroo.Pages.Listings
             {
                 Listing = listing;
                 _context.Listings.Remove(Listing);
+
+                // Delete listing images from local storage
+                var deleteImages = _context.ListingImages.
+                    Where(img => img.ListingId == listing.Id);
+                if(!deleteImages.IsNullOrEmpty())
+                {
+                    foreach(var image in deleteImages)
+                    {
+                        var imgPath = _env.WebRootPath + image.ImagePath;
+                        if (System.IO.File.Exists(imgPath))
+                            System.IO.File.Delete(imgPath);
+                    }
+                }
+
                 await _context.SaveChangesAsync();
             }
 

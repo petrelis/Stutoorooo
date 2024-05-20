@@ -3,19 +3,70 @@
 
 @{
     ViewData["Title"] = "Details";
+    float rating = Model.Listing.Rating;
 }
 
-<h1>Details</h1>
+<h1>@Model.Listing.Name</h1>
 
 <div>
-    <h4>Listing</h4>
+    @if(User.IsInRole("Customer"))
+    {
+        if(!Model.ListingIsFav)
+        {
+            <button type="submit" id="favoriteButton" class="btn btn-primary">
+                Favorite
+            </button>
+        }
+        else
+        {
+            <button type="submit" id="favoriteButton" class="btn btn-secondary">
+                Unfavorite
+            </button>
+        }
+        <dl class="row">
+            <dt>
+                Rate This Listing
+            </dt>
+            <dd class="col-sm-10">
+                <!-- HTML for star rating -->
+                <div class="rating">
+                    @for (int i = 2; i <= 10; i += 2)
+                    {
+                        <span class="star" data-value="@i">
+                            @if (Model.CurrentUserListingRating >= i)
+                            {
+                                <img class="star-image star-image-filled" src="/Images/FavoriteStarFilled.png" />
+                            }
+                            else
+                            {
+                                <img class="star-image" src="/Images/FavoriteStar.png" />
+                            }
+                        </span>
+                    }
+                </div>
+            </dd>
+        </dl>
+    }
+
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Listing.Name)
+            @Html.DisplayNameFor(model => model.Listing.Rating)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Listing.Name)
+            <div>
+                @for (int i = 2; i <= 10; i += 2)
+                {
+                        @if(Model.Listing.Rating <= i)
+                        {
+                            <img src="/Images/FavoriteStar.png" width="15" height="15" />
+                        }
+                        else
+                        {
+                            <img src="/Images/FavoriteStarFilled.png" width="15" height="15" />
+                        }
+                }
+            </div>
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Listing.Description)
@@ -54,14 +105,217 @@
             @Html.DisplayFor(model => model.Listing.Subject)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Listing.PostedByUser)
+            Posted By Tutor
         </dt>
         <dd class="col-sm-10">
+            <a asp-page="/Users/TutorUserDetails" asp-route-username="@Model.PostedByUser.UserName">
             @Html.DisplayFor(model => model.PostedByUser.UserName)
+            </a>
         </dd>
+        
     </dl>
+    @foreach(var img in Model.ListingImages)
+    {
+        <img src="@img.ImagePath" height="100" />
+    }
+    <h2>Contact Tutor</h2>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.PostedByUser.Email)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.PostedByUser.Email)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.PostedByUser.PhoneNo)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.PostedByUser.PhoneNo)
+    </dd>
 </div>
 <div>
-    <a asp-page="./Edit" asp-route-id="@Model.Listing?.Id">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
+    @{
+        if (Model.CurrentUser != null)
+        if (Model.CurrentUser.Id == Model.Listing.PostedByUserId)
+        {
+            <a asp-page="./Edit" asp-route-id="@Model.Listing.Id">Edit | </a>
+                <a asp-page="./Delete" asp-route-id="@Model.Listing.Id"> Delete </a>
+            }
+    }
 </div>
+<hr />
+<h3>Comments</h3>
+@if(User.IsInRole("Customer"))
+{
+    <form method="post">
+        <div class="form-group">
+            <label asp-for="CommentInputText" class="control-label"></label>
+            <input asp-for="CommentInputText" class="form-control" placeholder="Write a comment" />
+            <span asp-validation-for="CommentInputText" class="text-danger"></span>
+        </div>
+        <input asp-for="ListingIdInput" type="hidden" value="@Model.Listing.Id" />
+        <div class="form-group">
+            <input type="submit" value="Post" class="btn btn-primary" />
+        </div>
+    </form>
+    <br />
+}
+@if(Model.Comments.Count < 1)
+{
+    <p>No Comments Found</p>
+}
+@foreach(var comment in Model.Comments)
+{
+    <dl class="row">
+        <dt class="col-sm-2">
+            @{
+                var commentUser = Model.CommentUsers.Where(cu => cu.Id == comment.UserId).FirstOrDefault();
+                @if(commentUser.ImagePath != null)
+                {
+                    <img src="@commentUser.ImagePath" height="100" width="100" />
+                }
+                else
+                {
+                    <img src="/Images/icons8-user-96.png" height="100" width="100" />
+                }
+                @commentUser.UserName;
+            }
+        </dt>
+        <dd class="col-sm-10">
+            @comment.Text
+        </dd>
+    </dl>
+    @if (Model.CurrentUser != null)
+    {
+        @if (User.IsInRole("Admin") || Model.CurrentUser.Id == commentUser.Id)
+        {
+            <a asp-page="/AdminPages/Comments/Delete" asp-route-id="@comment.Id">
+                Delete
+            </a>
+        }
+    }
+}
+
+    <style>
+        .star-image {
+            width: 50px;
+            height: 50px;
+            content: url('/Images/FavoriteStar.png')
+        }
+
+        .star-image-filled {
+            width: 50px;
+            height: 50px;
+            content: url('/Images/FavoriteStarFilled.png');
+        }
+    </style>
+
+    @section Scripts {
+
+        <script>
+        document.getElementById("favoriteButton").addEventListener("click", function () {
+            var button = this; // Get the button element that triggered the click event
+
+            // Send an AJAX request to the server to favorite the listing
+            fetch('/Listings/Details?id=@Model.Listing.Id&handler=FavoriteListingHandler', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Add anti-forgery token if needed
+                },
+                body: JSON.stringify({})
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Listing favorited successfully
+                        console.log("Listing favorited successfully.");
+                        // Toggle button class
+                        button.classList.toggle("btn-secondary");
+                        button.classList.toggle("btn-primary");
+                        // Toggle button text
+                        button.innerText = button.innerText === 'Favorite' ? 'Unfavorite' : 'Favorite';
+                    } else {
+                        // Failed to favorite listing
+                        console.error("Failed to favorite listing.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+        });
+</script>
+
+    <script>
+        // JavaScript to handle star rating selection
+        let ratingValue = 0; // Initialize rating value
+
+        document.querySelector('.rating').addEventListener('mouseleave', () => {
+            // Reset star images to their default state when mouse leaves the rating container
+            document.querySelectorAll('.star').forEach(s => {
+                const sValue = parseInt(s.getAttribute('data-value'));
+                if (sValue <= ratingValue) {
+                    s.querySelector('.star-image').classList.add('star-image-filled');
+                } else {
+                    s.querySelector('.star-image').classList.remove('star-image-filled');
+                }
+            });
+        });
+
+        document.querySelectorAll('.star').forEach(star => {
+            star.addEventListener('mouseenter', () => {
+                const hoveredValue = parseInt(star.getAttribute('data-value'));
+
+                // Change the images of stars based on the hover event
+                document.querySelectorAll('.star').forEach(s => {
+                    const sValue = parseInt(s.getAttribute('data-value'));
+                    if (sValue <= hoveredValue) {
+                        s.querySelector('.star-image').classList.add('star-image-filled');
+                    } else {
+                        s.querySelector('.star-image').classList.remove('star-image-filled');
+                    }
+                });
+            });
+
+            star.addEventListener('click', () => {
+                ratingValue = parseInt(star.getAttribute('data-value'));
+
+                // Fill all stars up to the clicked one
+                document.querySelectorAll('.star').forEach(s => {
+                    const sValue = parseInt(s.getAttribute('data-value'));
+                    if (sValue <= ratingValue) {
+                        s.querySelector('.star-image').classList.add('star-image-filled');
+                    } else {
+                        s.querySelector('.star-image').classList.remove('star-image-filled');
+                    }
+                });
+
+                // Send the ratingValue to the server using AJAX
+                const listingId = @Model.Listing.Id; // Get the listing ID from the model
+                console.log('Rating value:', ratingValue);
+                fetch(`/Listings/Details?id=${listingId}&rating=${ratingValue}&handler=RateListing`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Add anti-forgery token if needed
+                    }
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            // Rating submitted successfully
+                            console.log("Rating submitted successfully.");
+                            // Update UI to reflect the selected rating if needed
+                        } else {
+                            // Failed to submit rating
+                            console.error("Failed to submit rating.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+            });
+        });
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

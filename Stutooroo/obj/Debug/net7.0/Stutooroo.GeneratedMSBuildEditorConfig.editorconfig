@@ -60,28 +60,64 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcSWRlbnRpdHlcUGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/AdminInterface.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xBZG1pbkludGVyZmFjZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/Comments/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xDb21tZW50c1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/Comments/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xDb21tZW50c1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/ExperienceLvls/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xFeHBlcmllbmNlTHZsc1xDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/ExperienceLvls/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xFeHBlcmllbmNlTHZsc1xEZWxldGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/ExperienceLvls/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xFeHBlcmllbmNlTHZsc1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/ExperienceLvls/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xFeHBlcmllbmNlTHZsc1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/ExperienceLvls/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xFeHBlcmllbmNlTHZsc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/SubjectGroups/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xTdWJqZWN0R3JvdXBzXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/SubjectGroups/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xTdWJqZWN0R3JvdXBzXERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/SubjectGroups/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xTdWJqZWN0R3JvdXBzXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/SubjectGroups/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xTdWJqZWN0R3JvdXBzXEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/SubjectGroups/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xTdWJqZWN0R3JvdXBzXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/AdminPages/Users/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQWRtaW5QYWdlc1xVc2Vyc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/ExperienceLvls/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXhwZXJpZW5jZUx2bHNcQ3JlYXRlLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/ExperienceLvls/Delete.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXhwZXJpZW5jZUx2bHNcRGVsZXRlLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/ExperienceLvls/Details.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXhwZXJpZW5jZUx2bHNcRGV0YWlscy5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/ExperienceLvls/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXhwZXJpZW5jZUx2bHNcRWRpdC5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/ExperienceLvls/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXhwZXJpZW5jZUx2bHNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/Index.cshtml]
@@ -120,24 +156,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/SubjectGroups/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3ViamVjdEdyb3Vwc1xDcmVhdGUuY3NodG1s
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/Users/CustomerUserDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXNlcnNcQ3VzdG9tZXJVc2VyRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/SubjectGroups/Delete.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3ViamVjdEdyb3Vwc1xEZWxldGUuY3NodG1s
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/Users/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXNlcnNcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/SubjectGroups/Details.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3ViamVjdEdyb3Vwc1xEZXRhaWxzLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/SubjectGroups/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3ViamVjdEdyb3Vwc1xFZGl0LmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/SubjectGroups/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3ViamVjdEdyb3Vwc1xJbmRleC5jc2h0bWw=
+[C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/Users/TutorUserDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVXNlcnNcVHV0b3JVc2VyRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/PetrasR-PC/source/repos/STUTOOROO/Stutooroo/Pages/_ViewImports.cshtml]

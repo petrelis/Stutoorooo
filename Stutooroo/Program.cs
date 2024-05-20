@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Stutooroo.Models;
@@ -24,6 +25,12 @@ namespace Stutooroo
             builder.Services.AddDefaultIdentity<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<StutoorooContext>();
+
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 60000000; // Set the maximum file upload size (in bytes) 6MB
+            });
+
 
             var app = builder.Build();
 

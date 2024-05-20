@@ -12,18 +12,23 @@
 
 <h1>Tutor Listings</h1>
 
-<h3>Search and Filter</h3>
-<hr />
-<form method="get">
-    <div class="form-group">
-        <label asp-for="ListingFilter.SearchString">Search:</label>
-        <input asp-for="ListingFilter.SearchString" class="form-control"  value="@Model.ListingFilter.SearchString"/>
+<div style="display: flex; align-items: center;">
+    <h3 style="margin-right: 10px;">Filter</h3>
+    <img src="~/Images/icons8-filter-48.png" type="button" id="toggleFormButton" height="30" />
+</div>
 
-        <label asp-for="ListingFilter.ExperienceLvlIdFilter" class="control-label"></label>
-        <select asp-for="ListingFilter.ExperienceLvlIdFilter" class="form-control" asp-items="ViewBag.ExperienceLvlId"></select>
+<!-- Collapsible Form Section -->
+<div id="filterFormContainer" style="display: none;">
+    <form method="get">
+        <div class="form-group">
+            <label asp-for="ListingFilter.SearchString">Search:</label>
+            <input asp-for="ListingFilter.SearchString" class="form-control" value="@Model.ListingFilter.SearchString" />
 
-        <label asp-for="ListingFilter.SubjectGroupIdFilter" class="control-label"></label>
-        <select asp-for="ListingFilter.SubjectGroupIdFilter" class="form-control" asp-items="ViewBag.SubjectGroupId"></select>
+            <label>Experience Level</label>
+            <select asp-for="ListingFilter.ExperienceLvlIdFilter" class="form-control" asp-items="ViewBag.ExperienceLvlId"></select>
+
+            <label>Subject Group</label>
+            <select asp-for="ListingFilter.SubjectGroupIdFilter" class="form-control" asp-items="ViewBag.SubjectGroupId"></select>
 
         <label asp-for="ListingFilter.DateFilterStart" class="control-label"></label>
         @{
@@ -47,9 +52,25 @@
                 <input asp-for="ListingFilter.HourlyRateFilter" class="form-control" value="" />
             }
         }
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <hr />
+</div>
+
+
+<!-- JavaScript/jQuery to Toggle Form Visibility -->
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Handle click event on the toggle button
+            $('#toggleFormButton').click(function () {
+                $('#filterFormContainer').slideToggle(); // Toggle visibility of the form section
+            });
+        });
+    </script>
+}
 <a asp-page="Create">Create New</a>
 </p>
 <table class="table">
@@ -91,11 +112,11 @@
                         @{var listingImage = Model.Images.FirstOrDefault(m => m.ListingId == item.Id);
                         if(listingImage != null)
                         {
-                            <img src="Images/@listingImage.ImagePath" height="100" />
+                            <img src="@listingImage.ImagePath" width="100" />
                         }
                         else
                         {
-                            <img src="Images/teacher_11720191.png" height="100"/>
+                            <img src="Images/teacher_11720191.png" width="100" />
                         }
                         }
                     </a>
@@ -126,9 +147,9 @@
             </td>
             <td>
                 @{
-                    if(Model.UserId == item.PostedByUserId)
+                    if(Model.UserId == item.PostedByUserId || User.IsInRole("Admin"))
                     {
-                        <a asp-page="./Edit" asp-route-id="@item">Edit</a>
+                        <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a>
                         <a asp-page = "./Delete" asp-route-id = "@item.Id" > Delete </a>
                     }
                 }
@@ -138,6 +159,10 @@
 }
     </tbody>
 </table>
+@if(Model.Listing.Count < 1)
+{
+    <p>No listings found.</p>
+}
 
 <div class="d-flex justify-content-end">
     @if (Model.Pager.CurrentPage > 1)
@@ -156,6 +181,19 @@
                 <li class="page-item @(pge == Model.Pager.CurrentPage ? "active" : "")">
                     <form method="get" asp-page="/Listings/Index" asp-route-pg="@pge">
                         <input type="hidden" name="pg" value="@pge" />
+                        <input type="hidden" name="ListingFilter.SearchString" value="@Model.ListingFilter.SearchString" />
+                        <input type="hidden" name="ListingFilter.ExperienceLvlIdFilter" value="@Model.ListingFilter.ExperienceLvlIdFilter" />
+                        <input type="hidden" name="ListingFilter.SubjectGroupIdFilter" value="@Model.ListingFilter.SubjectGroupIdFilter" />
+                        <input type="hidden" name="ListingFilter.DateFilterStart" value="@Model.ListingFilter.DateFilterStart" />
+                        @if(Model.ListingFilter.HourlyRateFilter != float.MaxValue)
+                        {
+                        <input asp-for="ListingFilter.HourlyRateFilter" type="hidden" class="form-control" value="@Model.ListingFilter.HourlyRateFilter" />
+                        }
+                        else
+                        {
+                        <input asp-for="ListingFilter.HourlyRateFilter" type="hidden" class="form-control" value="" />
+                        }
+
                         <button type="submit" class="btn @(pge == Model.Pager.CurrentPage ? "btn-primary" : "btn-secondary")">@pge</button>
                     </form>
                 </li>

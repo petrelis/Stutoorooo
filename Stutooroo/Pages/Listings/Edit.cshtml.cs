@@ -20,15 +20,25 @@ namespace Stutooroo.Pages.Listings
         private readonly Stutooroo.Models.StutoorooContext _context;
 
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _env;
 
-        public EditModel(Stutooroo.Models.StutoorooContext context, UserManager<ApplicationUser> userManager)
+        public EditModel(Stutooroo.Models.StutoorooContext context, UserManager<ApplicationUser> userManager, IWebHostEnvironment env)
         {
             _context = context;
             _userManager = userManager;
+            _env = env;
         }
 
         [BindProperty]
         public Listing Listing { get; set; } = default!;
+        [BindProperty]
+        public IFormFileCollection? ImageFiles { get; set; }
+        [BindProperty]
+        public List<ListingImage> ListingImages { get; set; }
+
+        private string postedByUserId { get; set; }
+
+
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -37,16 +47,23 @@ namespace Stutooroo.Pages.Listings
                 return NotFound();
             }
 
-            var listing =  await _context.Listings.FirstOrDefaultAsync(m => m.Id == id);
+            var listing =  await _context.Listings
+                .Include(l => l.ExperienceLvl)
+                .Include(l => l.PostedByUser)
+                .Include(l => l.SubjectGroup)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             if (listing == null)
             {
                 return NotFound();
             }
             Listing = listing;
 
+            ListingImages = _context.ListingImages.Where(l => l.ListingId == id).ToList();
+
             var currentUser = await _userManager.GetUserAsync(User);
 
-            if (Listing.PostedByUserId != currentUser.Id)
+            if (Listing.PostedByUserId != currentUser.Id && !User.IsInRole("Admin"))
                 return Unauthorized();
 
            ViewData["ExperienceLvlId"] = new SelectList(_context.ExperienceLvl, "Id", "Name");
@@ -60,7 +77,6 @@ namespace Stutooroo.Pages.Listings
         {
             var currentUser = await _userManager.GetUserAsync(User);
             Listing.PostedAtDateTime = DateTime.Now;
-            Listing.PostedByUser = currentUser;
             if (!ModelState.IsValid)
             {
                 return Page();
@@ -83,6 +99,35 @@ namespace Stutooroo.Pages.Listings
                     throw;
                 }
             }
+
+
+            // Save listing images
+            if (ImageFiles != null && ImageFiles.Count > 0)
+            {
+                foreach (var file in ImageFiles)
+                {
+                    var uploadsDirectory = Path.Combine(_env.WebRootPath, "Images");
+                    var fileName = Path.GetFileName(file.FileName);
+                    var filePath = Path.Combine(uploadsDirectory, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    // Create a ListingImage and save its path
+                    var listingImage = new ListingImage
+                    {
+                        ListingId = Listing.Id,
+                        ImagePath = "/Images/" + fileName // Store the relative path
+                    };
+
+                    _context.ListingImages.Add(listingImage);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
 
             return RedirectToPage("./Index");
         }

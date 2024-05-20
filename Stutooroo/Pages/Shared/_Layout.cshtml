@@ -27,7 +27,7 @@
                     </ul>
                 </div>
 
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             @{
@@ -35,6 +35,30 @@
                                 {
                                     <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
                                         <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                                    </form>
+                                    if (User.IsInRole("Customer"))
+                                    {
+                                        <a asp-page="/Users/CustomerUserDetails" asp-route-username="@User.Identity.Name">
+                                            <button type="submit" class="nav-link btn btn-link text-dark">@User.Identity.Name</button>
+                                        </a>
+                                    }
+                                    else if (User.IsInRole("Tutor"))
+                                    {
+                                        <a asp-page="/Users/TutorUserDetails" asp-route-username="@User.Identity.Name" method="get">
+                                            <button type="submit" class="nav-link btn btn-link text-dark">@User.Identity.Name</button>
+                                        </a>
+                                    }
+                                    else if (User.IsInRole("Admin"))
+                                    {
+                                        <form class="form-inline" asp-page="/AdminPages/AdminInterface" method="get">
+                                            <button type="submit" class="nav-link btn btn-link text-dark">@User.Identity.Name</button>
+                                        </form>
+                                    }
+                                }
+                                else
+                                {
+                                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                                        <button type="submit" class="nav-link btn btn-link text-dark">Login</button>
                                     </form>
                                 }
                             }

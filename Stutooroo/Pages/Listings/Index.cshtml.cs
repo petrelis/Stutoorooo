@@ -74,6 +74,7 @@ namespace Stutooroo.Pages.Listings
                     .Include(l => l.ExperienceLvl)
                     .Include(l => l.PostedByUser)
                     .Include(l => l.SubjectGroup)
+                    .OrderByDescending(l => l.PostedAtDateTime)
                     .Where(l => l.PostedAtDateTime > ListingFilter.DateFilterStart &&
                                 l.HourlyRate < ListingFilter.HourlyRateFilter &&
                                 (ListingFilter.RatingFilter == null || l.Rating >= ListingFilter.RatingFilter));
@@ -101,13 +102,8 @@ namespace Stutooroo.Pages.Listings
                 // Execute the query and materialize the results into a list
                 Listing = await query.ToListAsync();
             }
-            if (_context.ListingImages != null)
-            {
-                Images = await _context.ListingImages
-                .ToListAsync();
-            }
 
-            const int pageSize = 3;
+            const int pageSize = 5;
             if (pg < 1)
                 pg = 1;
 
@@ -118,6 +114,20 @@ namespace Stutooroo.Pages.Listings
             int recSkip = (pg - 1) * pageSize;
 
             Listing = Listing.Skip(recSkip).Take(pager.PageSize).ToList();
+
+            var listingImages = new List<ListingImage>();
+            if (_context.ListingImages != null)
+            {
+                foreach (var l in Listing)
+                {
+                    var listImg = _context.ListingImages
+                        .Where(li => li.ListingId == l.Id)
+                        .ToList();
+
+                    listingImages.AddRange(listImg);
+                }
+            }
+            Images = listingImages;
 
             Pager = pager;
         }
