@@ -15,13 +15,11 @@ namespace Stutooroo.Pages.Users
     {
         private readonly Stutooroo.Models.StutoorooContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly Microsoft.AspNetCore.Hosting.IWebHostEnvironment _env;
 
-        public CustomerUserDetailsModel(StutoorooContext context, UserManager<ApplicationUser> userManager, IWebHostEnvironment env)
+        public CustomerUserDetailsModel(StutoorooContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
-            _env = env;
         }
 
         public ApplicationUser? AppUser { get; set; }
@@ -29,6 +27,7 @@ namespace Stutooroo.Pages.Users
         public int? Age { get; set; }
         public IList<Listing> Listings { get; set; } = default!;
         public IList<ListingImage> Images { get; set; } = default!;
+        public Listings.IndexModel IndexPartialModel { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string? username)
         {
@@ -70,6 +69,9 @@ namespace Stutooroo.Pages.Users
                 Images = await _context.ListingImages
                 .ToListAsync();
             }
+
+            IndexPartialModel = new Listings.IndexModel(_context, _userManager);
+            IndexPartialModel = IndexPartialModel.InitIndexPartial(Listings, Images, "Favorite Listings");
 
             if (AppUser.DateOfBirth.HasValue)
                 Age = (int)(DateTime.Now - AppUser.DateOfBirth).Value.TotalDays / 365;

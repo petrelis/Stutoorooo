@@ -72,94 +72,14 @@
     {
         if (Model.CurrentUser.Id == Model.AppUser.Id || User.IsInRole("Admin"))
         {
-            <a asp-page="./Delete" asp-route-id="@Model.AppUser.Id"> Delete </a>
+            <a asp-page="./Delete" asp-route-id="@Model.AppUser.Id" class="dangerlink"> Delete Your Account </a>
         }
     }
 }
 
 <hr />
 
-<h3>Tutor's Listings</h3>
-<table class="table">
-    <thead>
-        <tr>
-            <th></th>
-            <th>
-                @Html.DisplayNameFor(model => model.Listings[0].Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Listings[0].Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Listings[0].PostedAtDateTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Listings[0].ExperienceLvl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Listings[0].HourlyRate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Listings[0].Subject)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Listings[0].PostedByUser.UserName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Listings[0].PostedByUser.FirstName)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Listings)
-        {
-            <tr>
-                <td>
-                    <a asp-page="/Listings/Details" asp-route-id="@item.Id">
-                        @{
-                            var listingImage = Model.Images.FirstOrDefault(m => m.ListingId == item.Id);
-                            if (listingImage != null)
-                            {
-                                <img src="@listingImage.ImagePath" width="100" />
-                            }
-                            else
-                            {
-                                <img src="/Images/teacher_11720191.png" width="100" />
-                            }
-                        }
-                    </a>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PostedAtDateTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ExperienceLvl.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.HourlyRate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Subject)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PostedByUser.UserName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PostedByUser.FirstName)
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-@if (Model.Listings.Count < 1)
+@section Scripts
 {
-    <p>No listings found.</p>
+    @await Html.PartialAsync("/Pages/Listings/_IndexPartial.cshtml", Model.IndexPartialModel);
 }

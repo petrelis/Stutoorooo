@@ -51,28 +51,6 @@
                 <label asp-for="ImageFile" class="control-label"></label>
                 <input type="file" asp-for="ImageFile" class="form-control" accept=".jpg, .png" onchange="validateImageFiles()" multiple />
                 <span asp-validation-for="ImageFile" class="text-danger"></span>
-                <script>
-                    function validateImageFiles() {
-                        const input = document.getElementById('ImageFile');
-                        const files = input.files;
-                        const allowedExtensions = ['.jpg', '.png'];
-                        let isValid = true;
-
-                        for (let i = 0; i < files.length; i++) {
-                            const file = files[i];
-                            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-                            if (!allowedExtensions.includes(fileExtension)) {
-                                isValid = false;
-                                break;
-                            }
-                        }
-
-                        if (!isValid) {
-                            input.value = '';
-                            alert('Please select only .jpg or .png files.');
-                        }
-                    }
-                </script>
             </div>
 
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>

@@ -13,13 +13,13 @@
     {
         if(!Model.ListingIsFav)
         {
-            <button type="submit" id="favoriteButton" class="btn btn-primary">
+            <button type="submit" id="favoriteButton" class="btn btn-primary" data-listing-id="@Model.Listing.Id">
                 Favorite
             </button>
         }
         else
         {
-            <button type="submit" id="favoriteButton" class="btn btn-secondary">
+            <button type="submit" id="favoriteButton" class="btn btn-secondary" data-listing-id="@Model.Listing.Id">
                 Unfavorite
             </button>
         }
@@ -29,7 +29,7 @@
             </dt>
             <dd class="col-sm-10">
                 <!-- HTML for star rating -->
-                <div class="rating">
+                <div class="rating" data-listing-id="@Model.Listing.Id">
                     @for (int i = 2; i <= 10; i += 2)
                     {
                         <span class="star" data-value="@i">
@@ -57,13 +57,13 @@
             <div>
                 @for (int i = 2; i <= 10; i += 2)
                 {
-                        @if(Model.Listing.Rating <= i)
+                        @if(Model.Listing.Rating >= i)
                         {
-                            <img src="/Images/FavoriteStar.png" width="15" height="15" />
+                            <img src="/Images/FavoriteStarFilled.png" width="15" height="15" />
                         }
                         else
                         {
-                            <img src="/Images/FavoriteStarFilled.png" width="15" height="15" />
+                        <img src="/Images/FavoriteStar.png" width="15" height="15" />
                         }
                 }
             </div>
@@ -112,13 +112,22 @@
             @Html.DisplayFor(model => model.PostedByUser.UserName)
             </a>
         </dd>
-        
+        <div>
+            @{
+                if (Model.CurrentUser != null)
+                    if (Model.CurrentUser.Id == Model.Listing.PostedByUserId)
+                    {
+                        <a asp-page="./Edit" asp-route-id="@Model.Listing.Id">Edit | </a>
+                        <a asp-page="./Delete" asp-route-id="@Model.Listing.Id"> Delete </a>
+                    }
+            }
+        </div>
     </dl>
     @foreach(var img in Model.ListingImages)
     {
         <img src="@img.ImagePath" height="100" />
     }
-    <h2>Contact Tutor</h2>
+    <h2>Contact @Model.PostedByUser.UserName</h2>
     <dt class="col-sm-2">
         @Html.DisplayNameFor(model => model.PostedByUser.Email)
     </dt>
@@ -131,16 +140,6 @@
     <dd class="col-sm-10">
         @Html.DisplayFor(model => model.PostedByUser.PhoneNo)
     </dd>
-</div>
-<div>
-    @{
-        if (Model.CurrentUser != null)
-        if (Model.CurrentUser.Id == Model.Listing.PostedByUserId)
-        {
-            <a asp-page="./Edit" asp-route-id="@Model.Listing.Id">Edit | </a>
-                <a asp-page="./Delete" asp-route-id="@Model.Listing.Id"> Delete </a>
-            }
-    }
 </div>
 <hr />
 <h3>Comments</h3>
@@ -195,126 +194,7 @@
     }
 }
 
-    <style>
-        .star-image {
-            width: 50px;
-            height: 50px;
-            content: url('/Images/FavoriteStar.png')
-        }
-
-        .star-image-filled {
-            width: 50px;
-            height: 50px;
-            content: url('/Images/FavoriteStarFilled.png');
-        }
-    </style>
-
-    @section Scripts {
-
-        <script>
-        document.getElementById("favoriteButton").addEventListener("click", function () {
-            var button = this; // Get the button element that triggered the click event
-
-            // Send an AJAX request to the server to favorite the listing
-            fetch('/Listings/Details?id=@Model.Listing.Id&handler=FavoriteListingHandler', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Add anti-forgery token if needed
-                },
-                body: JSON.stringify({})
-            })
-                .then(response => {
-                    if (response.ok) {
-                        // Listing favorited successfully
-                        console.log("Listing favorited successfully.");
-                        // Toggle button class
-                        button.classList.toggle("btn-secondary");
-                        button.classList.toggle("btn-primary");
-                        // Toggle button text
-                        button.innerText = button.innerText === 'Favorite' ? 'Unfavorite' : 'Favorite';
-                    } else {
-                        // Failed to favorite listing
-                        console.error("Failed to favorite listing.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                });
-        });
-</script>
-
-    <script>
-        // JavaScript to handle star rating selection
-        let ratingValue = 0; // Initialize rating value
-
-        document.querySelector('.rating').addEventListener('mouseleave', () => {
-            // Reset star images to their default state when mouse leaves the rating container
-            document.querySelectorAll('.star').forEach(s => {
-                const sValue = parseInt(s.getAttribute('data-value'));
-                if (sValue <= ratingValue) {
-                    s.querySelector('.star-image').classList.add('star-image-filled');
-                } else {
-                    s.querySelector('.star-image').classList.remove('star-image-filled');
-                }
-            });
-        });
-
-        document.querySelectorAll('.star').forEach(star => {
-            star.addEventListener('mouseenter', () => {
-                const hoveredValue = parseInt(star.getAttribute('data-value'));
-
-                // Change the images of stars based on the hover event
-                document.querySelectorAll('.star').forEach(s => {
-                    const sValue = parseInt(s.getAttribute('data-value'));
-                    if (sValue <= hoveredValue) {
-                        s.querySelector('.star-image').classList.add('star-image-filled');
-                    } else {
-                        s.querySelector('.star-image').classList.remove('star-image-filled');
-                    }
-                });
-            });
-
-            star.addEventListener('click', () => {
-                ratingValue = parseInt(star.getAttribute('data-value'));
-
-                // Fill all stars up to the clicked one
-                document.querySelectorAll('.star').forEach(s => {
-                    const sValue = parseInt(s.getAttribute('data-value'));
-                    if (sValue <= ratingValue) {
-                        s.querySelector('.star-image').classList.add('star-image-filled');
-                    } else {
-                        s.querySelector('.star-image').classList.remove('star-image-filled');
-                    }
-                });
-
-                // Send the ratingValue to the server using AJAX
-                const listingId = @Model.Listing.Id; // Get the listing ID from the model
-                console.log('Rating value:', ratingValue);
-                fetch(`/Listings/Details?id=${listingId}&rating=${ratingValue}&handler=RateListing`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() // Add anti-forgery token if needed
-                    }
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            // Rating submitted successfully
-                            console.log("Rating submitted successfully.");
-                            // Update UI to reflect the selected rating if needed
-                        } else {
-                            // Failed to submit rating
-                            console.error("Failed to submit rating.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                    });
-            });
-        });
-    </script>
-
+@section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

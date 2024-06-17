@@ -24,15 +24,34 @@ namespace Stutooroo.Pages.Listings
             _userManager = userManager;
         }
 
-        public IList<Listing> Listing { get; set; } = default!;
-        public IList<ListingImage> Images { get; set; } = default!;
+        public IndexModel InitIndexPartial(IList<Listing> listings, IList<ListingImage> images, string partialTitle)
+        {
+            IndexModel IndexPartialModel = new IndexModel(_context, _userManager);
+            if(User != null)
+            {
+                IndexPartialModel.UserId = _userManager.GetUserId(User);
+            }
+            else
+            {
+                IndexPartialModel.UserId = "";
+            }
+            IndexPartialModel.Listings = listings;
+            IndexPartialModel.Images = images;
+            IndexPartialModel.PartialTitle = partialTitle;
 
+            return IndexPartialModel;
+        }
+
+        public IList<Listing> Listings { get; set; } = default!;
+        public IList<ListingImage> Images { get; set; } = default!;
         public string UserId { get; set; } = default!;
+        public ApplicationUser CurrentUser { get; set; } = default!;
 
         public Pager Pager { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public ListingFilterModel ListingFilter { get; set; }
+        public string PartialTitle { get; set; } = default!;
 
         public async Task OnGetAsync(int pg=1)
         {
@@ -40,7 +59,10 @@ namespace Stutooroo.Pages.Listings
             if (currentUser == null)
                 UserId = null;
             else
+            {
                 UserId = currentUser.Id;
+                CurrentUser = currentUser;
+            }
 
             var ExperienceSLI = new List<SelectListItem>
             {
@@ -100,25 +122,25 @@ namespace Stutooroo.Pages.Listings
                 }
 
                 // Execute the query and materialize the results into a list
-                Listing = await query.ToListAsync();
+                Listings = await query.ToListAsync();
             }
 
             const int pageSize = 5;
             if (pg < 1)
                 pg = 1;
 
-            int recsCount = Listing.Count();
+            int recsCount = Listings.Count();
 
             var pager = new Pager(recsCount, pg, pageSize);
 
             int recSkip = (pg - 1) * pageSize;
 
-            Listing = Listing.Skip(recSkip).Take(pager.PageSize).ToList();
+            Listings = Listings.Skip(recSkip).Take(pager.PageSize).ToList();
 
             var listingImages = new List<ListingImage>();
             if (_context.ListingImages != null)
             {
-                foreach (var l in Listing)
+                foreach (var l in Listings)
                 {
                     var listImg = _context.ListingImages
                         .Where(li => li.ListingId == l.Id)

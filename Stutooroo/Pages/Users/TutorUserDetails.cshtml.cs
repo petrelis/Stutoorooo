@@ -26,6 +26,7 @@ namespace Stutooroo.Pages.Users
         public ApplicationUser? CurrentUser { get; set; }
         public IList<Listing>? Listings { get; set; } = default!;
         public IList<ListingImage> Images { get; set; } = default!;
+        public Listings.IndexModel IndexPartialModel { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(string? username)
         {
@@ -56,6 +57,9 @@ namespace Stutooroo.Pages.Users
             }
             
             CurrentUser = await _userManager.GetUserAsync(User);
+
+            IndexPartialModel = new Listings.IndexModel(_context, _userManager);
+            IndexPartialModel = IndexPartialModel.InitIndexPartial(Listings, Images, "Tutor's Listings");
 
             return Page();
         }
